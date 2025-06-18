@@ -25,12 +25,10 @@ print(f"TWILIO_ACCOUNT_SID: {twilio_account_sid}, TWILIO_API_KEY_SECRET: {twilio
 app = Flask(__name__)
 
 def get_chatroom(name):
-    for conversation in twilio_client.conversations.conversations.stream():
-        if conversation.friendly_name == name:
-            return conversation
-
-    # Create a new conversation if it doesn't exist
-    return twilio_client.conversations.conversations.create(friendly_name=name)
+    conversations = twilio_client.conversations.v1.conversations.list(friendly_name=name)
+    if conversations:
+        return conversations[0]
+    return twilio_client.conversations.v1.conversations.create(friendly_name=name)
 
 @app.route('/')
 def index():
